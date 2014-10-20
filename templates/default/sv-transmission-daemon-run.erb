@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+NAME=transmission-daemon
+DAEMON=/usr/bin/$NAME
+USER=debian-transmission
+
+export PATH="${PATH:+$PATH:}/sbin:/usr/local/bin"
+
+[ -x $DAEMON ] || exit 0
+
+[ -e /etc/default/$NAME ] && . /etc/default/$NAME
+
+exec chpst -u $USER $DAEMON -f $OPTIONS
