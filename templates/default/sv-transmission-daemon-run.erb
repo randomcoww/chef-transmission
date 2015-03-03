@@ -1,13 +1,11 @@
 #!/bin/sh -e
 
-NAME=transmission-daemon
+NAME=<%= @options[:service_binary] %>
 DAEMON=/usr/bin/$NAME
-USER=debian-transmission
+USER=<%= @options[:user] %>
 
 export PATH="${PATH:+$PATH:}/sbin:/usr/local/bin"
 
 [ -x $DAEMON ] || exit 0
 
-[ -e /etc/default/$NAME ] && . /etc/default/$NAME
-
-exec chpst -u $USER $DAEMON -f $OPTIONS
+exec chpst -u $USER $DAEMON -f --config-dir <%= @options[:config_path] %>
