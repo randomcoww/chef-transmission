@@ -7,16 +7,13 @@
 # All rights reserved - Do Not Redistribute
 #
 
-node['transmission_wrapper']['packages'].each_pair do |pkg, ver|
-  package pkg do
-    action :install
-    version ver if ver
-  end
-end
-
 directory node['transmission']['home'] do
   owner node['transmission']['user']
   group node['transmission']['group']
+end
+
+package node['transmission_wrapper']['package'] do
+  action :install
 end
 
 file ::File.join(node['transmission']['config_dir'], 'settings.json') do
@@ -24,6 +21,7 @@ file ::File.join(node['transmission']['config_dir'], 'settings.json') do
   owner node['transmission']['user']
   group node['transmission']['group']
   mode "0644"
+  #action :create_if_missing
   #notifies :restart, "service[transmission-daemon]", :delayed
 end
 

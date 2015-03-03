@@ -1,4 +1,5 @@
 bag = Chef::EncryptedDataBagItem.load('openvpn', 'pia_seattle')
+container_run = ENV['CONTAINER_RUN'].to_i > 0
 
 openvpn_client_service 'pia_seattle' do
   config ({
@@ -22,4 +23,9 @@ openvpn_client_service 'pia_seattle' do
   auth_user bag['user']
   auth_pass bag['password']
   ca bag['ca']
+end
+
+route node['route']['network'] do
+  gateway node['route']['gateway']
+  only_if { container_run }
 end

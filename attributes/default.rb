@@ -11,7 +11,7 @@ node.set_unless['transmission']['settings'] = {
   #"blocklist-enabled" => false,
   #"blocklist-url" => "http://www.example.com/blocklist",
   "cache-size-mb" => 1024,
-  #"dht-enabled" => true,
+  "dht-enabled" => true,
   "download-dir" => "/var/lib/transmission-daemon/downloads",
   "download-limit" => 100,
   "download-limit-enabled" => 0,
@@ -82,10 +82,11 @@ node.set_unless['transmission']['settings'] = {
 }
 
 node.default['transmission_wrapper']['service_binary'] = 'transmission-daemon'
-node.default['transmission_wrapper']['packages'] = {
-  'transmission-daemon' => nil
-}
+node.default['transmission_wrapper']['package'] = 'transmission-daemon'
 
 node.override['iptables']['install_rules'] = false
 
-node.override['openvpn_client']['dev'] = 'tun1'
+node.default['openvpn_client']['dev'] = 'tun1'
+
+node.default['route']['network'] = '192.168.62.0/23'
+node.default['route']['gateway'] = '172.17.42.1'
