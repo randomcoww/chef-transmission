@@ -1,4 +1,4 @@
-node.set_unless['transmission']['settings'] = {
+node.set_unless['transmission_wrapper']['settings'] = {
   "alt-speed-down" => 1000,
   "alt-speed-enabled" => true,
   #"alt-speed-time-begin" => 540,
@@ -80,6 +80,9 @@ node.set_unless['transmission']['settings'] = {
   "watch-dir" => "/var/lib/transmission-daemon/watch",
   "watch-dir-enabled" => false
 }
+
+node.default['transmission_wrapper']['uid'] = 10006
+node.default['transmission_wrapper']['gid'] = 10006
 
 node.default['transmission_wrapper']['service_binary'] = 'transmission-daemon'
 node.default['transmission_wrapper']['package'] = 'transmission-daemon'
