@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+NAME=<%= @options[:service_binary] %>
+DAEMON=/usr/bin/$NAME
+USER=<%= @options[:user] %>
+
+export PATH="${PATH:+$PATH:}/sbin:/usr/local/bin"
+
+[ -x $DAEMON ] || exit 0
+
+exec chpst -u $USER $DAEMON -f --config-dir <%= @options[:config_path] %>

@@ -1,0 +1,3 @@
+cookbook_path [{{.CookbookPaths}}]
+data_bag_path "{{.DataBagsPath}}"
+encrypted_data_bag_secret "/etc/chef/secure/encrypted_data_bag_secret"

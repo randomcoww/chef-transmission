@@ -1,0 +1,44 @@
+{
+  "builders": [
+    {
+      "type": "docker",
+      "image": "phusion/baseimage:latest",
+      "commit": "true",
+      "run_command": ["-d", "-i", "-t", "--privileged=true", "{{.Image}}", "/sbin/my_init", "--", "bash", "-l"],
+      "volumes": {
+        "/etc/chef/secure": "/etc/chef/secure"
+      }
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "apt-get -y update",
+        "apt-get install -y curl vim git"
+      ]
+    },
+    {
+      "type": "chef-solo",
+      "cookbook_paths": ["cookbooks"],
+      "run_list": ["transmission_wrapper::docker"],
+      "staging_directory": "/etc/chef",
+      "data_bags_path": "/etc/chef/secure/data_bags",
+      "config_template": "chef_config",
+      "json": {
+        "chef_client": {
+          "daemon_options": ["-z", "-c", "/etc/chef/solo.rb", "-j", "/etc/chef/node.json"]
+        }
+      }
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "docker-tag",
+      "repository": "randomcoww/transmission",
+      "tag": "0.4.5"
+    }
+  ]
+}

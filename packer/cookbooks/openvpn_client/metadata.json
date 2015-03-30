@@ -1,0 +1,32 @@
+{
+  "name": "openvpn_client",
+  "description": "Installs/Configures openvpn_client",
+  "long_description": "Installs/Configures openvpn_client",
+  "maintainer": "YOUR_NAME",
+  "maintainer_email": "YOUR_EMAIL",
+  "license": "All rights reserved",
+  "platforms": {
+  },
+  "dependencies": {
+    "runit": "= 1.5.10"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.2.3",
+  "source_url": "",
+  "issues_url": ""
+}
