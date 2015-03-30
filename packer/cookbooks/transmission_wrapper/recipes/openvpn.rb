@@ -1,5 +1,5 @@
 bag = Chef::EncryptedDataBagItem.load('openvpn', 'pia_seattle')
-#container_run = node['transmission_wrapper']['env']['container_run']
+container_run = node['transmission_wrapper']['env']['container_run']
 
 openvpn_client_service 'pia_seattle' do
   config ({
@@ -27,5 +27,5 @@ end
 
 route node['route']['network'] do
   gateway node['route']['gateway']
-  #only_if { container_run }
+  only_if { container_run }
 end
