@@ -1,5 +1,11 @@
 ## do all networking stuff at startup. some require privileged mode
 
+## add static routes
+
+route node['route']['network'] do
+  gateway node['route']['gateway']
+end
+
 ## add iptables riles
 
 include_recipe 'iptables::default'
@@ -11,17 +17,9 @@ iptables_rule "transmission-route" do
   })
 end
 
-## add static routes
-
-route node['route']['network'] do
-  gateway node['route']['gateway']
-end
-
-## start iptables rules
-
-execute 'load_iptables' do
-  command '/sbin/iptables-restore < /etc/iptables/general'
-end
+#execute 'load_iptables' do
+#  command '/sbin/iptables-restore < /etc/iptables/general'
+#end
 
 ## write openvpn configs. data bag should be available during startup
 
