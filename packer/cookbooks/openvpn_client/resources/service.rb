@@ -1,10 +1,10 @@
-actions :create
+actions :create, :startup
 default_action :create
 
 attribute :name, :kind_of => [String], :name_attribute => true
-attribute :config_path, :kind_of => [String], :default => node['openvpn_client']['config_path']
-attribute :packages, :kind_of => [Hash], :default => node['openvpn_client']['packages']
-attribute :openvpn_binary, :kind_of => [String], :default => node['openvpn_client']['openvpn_binary']
+attribute :config_path, :kind_of => [String], :default => '/etc/openvpn'
+attribute :package, :kind_of => [String], :default => 'openvpn'
+attribute :openvpn_binary, :kind_of => [String], :default => '/usr/sbin/openvpn'
 attribute :template_name, :kind_of => [String], :default => 'openvpn'
 attribute :template_cookbook, :kind_of => [String], :default => 'openvpn_client'
 attribute :run_options, :kind_of => [String], :default => ''
