@@ -87,8 +87,6 @@ node.default['transmission_wrapper']['gid'] = 10006
 node.default['transmission_wrapper']['service_binary'] = 'transmission-daemon'
 node.default['transmission_wrapper']['package'] = 'transmission-daemon'
 
-node.default['transmission_wrapper']['env']['container_run'] = ENV['CONTAINER_RUN'].to_i > 0
-
 node.override['iptables']['install_rules'] = false
 
 node.default['openvpn_client']['dev'] = 'tun1'
