@@ -1,0 +1,6 @@
+source "https://supermarket.getchef.com"
+
+metadata
+
+cookbook 'chef-client'
+cookbook 'runit', '=1.5.10'

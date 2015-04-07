@@ -1,0 +1,23 @@
+## default confs ##
+
+include "<%= ::File.join(@conf_path, 'rndc.key') %>";
+include "<%= ::File.join(@conf_path, 'named.conf.default-zones') %>";
+include "<%= ::File.join(@conf_path, 'named.conf.local') %>";
+
+## enable rndc control ##
+
+controls { inet * allow { 127.0.0.1; } keys { "rndc-key"; }; };
+
+## options ##
+
+options {
+  directory "<%= @zone_path %>";
+  <% unless @allow_recursion.empty? %>
+  recursion yes;
+  allow-recursion { <%= @allow_recursion.join('; ') %>; };
+  <% end %>
+};
+
+## zone confs ##
+
+include "<%= ::File.join(@conf_path, @zone_conf_name) %>";

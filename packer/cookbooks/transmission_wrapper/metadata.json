@@ -12,7 +12,8 @@
     "iptables": ">= 0.0.0",
     "openvpn_client": ">= 0.0.0",
     "transmission": ">= 0.0.0",
-    "chef-client": ">= 0.0.0"
+    "chef-client": ">= 0.0.0",
+    "bind_git": ">= 0.0.0"
   },
   "recommendations": {
   },

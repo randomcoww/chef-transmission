@@ -8,7 +8,7 @@ end
 
 ## add iptables riles
 
-include_recipe 'iptables::default'
+#include_recipe 'iptables::default'
 
 iptables_rule "transmission-route" do
   variables({

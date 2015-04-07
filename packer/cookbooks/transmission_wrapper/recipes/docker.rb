@@ -65,6 +65,24 @@ openvpn_client_service 'openvpn' do
   ca bag['ca']
 end
 
+## install iptables packages
+
+include_recipe 'iptables::default'
+
+## create internal dns server with just default zones
+
+bind_git_static "internal_ns" do
+  service_name "bind"
+  user 'bind'
+  group 'bind'
+  deploy_to '/var/lib/bind'
+  named_conf_variables ({
+    'allow_recursion' => [
+      '127.0.0.1'
+    ]
+  })
+end
+
 ## create startup script for phusion baseimage
 
 file "/etc/my_init.d/95_chef_startup" do

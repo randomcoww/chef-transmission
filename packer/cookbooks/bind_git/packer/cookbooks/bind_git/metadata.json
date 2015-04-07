@@ -1,0 +1,33 @@
+{
+  "name": "bind_git",
+  "description": "Installs/Configures bind_git",
+  "long_description": "Installs/Configures bind_git",
+  "maintainer": "YOUR_NAME",
+  "maintainer_email": "YOUR_EMAIL",
+  "license": "All rights reserved",
+  "platforms": {
+  },
+  "dependencies": {
+    "chef-client": ">= 0.0.0",
+    "runit": "= 1.5.10"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.0.1",
+  "source_url": "",
+  "issues_url": ""
+}
