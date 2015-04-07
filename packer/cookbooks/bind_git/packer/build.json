@@ -33,7 +33,7 @@
     {
       "type": "docker-tag",
       "repository": "randomcoww/bind",
-      "tag": "0.4.6"
+      "tag": "0.4.8"
     }
   ]
 }

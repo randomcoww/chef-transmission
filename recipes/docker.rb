@@ -75,7 +75,6 @@ bind_git_static "internal_ns" do
   service_name "bind"
   user 'bind'
   group 'bind'
-  deploy_to '/var/lib/bind'
   named_conf_variables ({
     'allow_recursion' => [
       '127.0.0.1'

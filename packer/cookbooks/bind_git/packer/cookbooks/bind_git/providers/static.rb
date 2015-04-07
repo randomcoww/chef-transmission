@@ -3,7 +3,7 @@ include Chef::Mixin::ShellOut
 
 def load_current_resource
   @current_resource = Chef::Resource::BindGitStatic.new(new_resource.name)
-  @current_resource 
+  @current_resource
 end
 
 
@@ -47,7 +47,7 @@ def named_conf
     variables ({
       'zone_conf_name' => new_resource.zone_conf_name,
       'conf_path' => new_resource.conf_path,
-      'zone_path' => new_resource.deploy_to,
+      'zone_path' => new_resource.zone_path,
     }.merge(new_resource.named_conf_variables))
     ## no config changes for chef local mode
     #notifies :restart, "service[#{new_resource.service_name}]", :delayed
@@ -57,10 +57,14 @@ def named_conf
   return @named_conf
 end
 
+def deploy_path
+  return @deploy_path ||= ::File.join(new_resource.zone_path, new_resource.name)
+end
+
 def git_hash
   begin
     out = shell_out!("git rev-parse HEAD",
-      :cwd => new_resource.deploy_to,
+      :cwd => deploy_path,
       :user => new_resource.user,
       :group => new_resource.group
     )
@@ -76,7 +80,7 @@ def git_repo
 
   @old_git_hash = git_hash
 
-  directory ::File.dirname(new_resource.deploy_to) do
+  directory ::File.dirname(deploy_path) do
     owner new_resource.user
     group new_resource.group
     recursive true
@@ -90,7 +94,7 @@ def git_repo
     user new_resource.user
     group new_resource.group
 
-    destination new_resource.deploy_to
+    destination deploy_path
 
     action :nothing
     not_if { new_resource.git_repo.nil? or new_resource.git_branch.nil? }
@@ -106,7 +110,7 @@ def git_changes
 
   if git_repo.updated_by_last_action?
     out = shell_out!("git diff --name-only #{@old_git_hash} #{git_hash}",
-      :cwd => new_resource.deploy_to,
+      :cwd => deploy_path,
       :user => new_resource.user,
       :group => new_resource.group
     )
@@ -124,7 +128,7 @@ def git_reset
   if git_repo.updated_by_last_action?
   
     shell_out!("git reset --hard #{@old_git_hash}",
-      :cwd => new_resource.deploy_to,
+      :cwd => deploy_path,
       :user => new_resource.user,
       :group => new_resource.group
     )
@@ -137,11 +141,11 @@ def zone_conf
   added_zones = {}
 
   ## check for added or missing files
-  if ::File.directory?(new_resource.deploy_to)
+  if ::File.directory?(deploy_path)
 
-    ::Dir.entries(new_resource.deploy_to).each do |p|
+    ::Dir.entries(deploy_path).each do |p|
       next if p.chars.first == '.'
-      next unless ::File.file?(::File.join(new_resource.deploy_to, p))
+      next unless ::File.file?(::File.join(deploy_path, p))
       added_zones[p] = true
     end
   end
@@ -154,7 +158,10 @@ def zone_conf
     owner new_resource.user
     group new_resource.group
     cookbook new_resource.zone_conf_cookbook
-    variables ({ 'zones' => added_zones.keys.sort.uniq }.merge(new_resource.zone_conf_variables))
+    variables ({ 
+      'zones' => added_zones.keys.sort.uniq,
+      'path' => new_resource.name
+    }.merge(new_resource.zone_conf_variables))
     action :nothing
   end
 
@@ -167,7 +174,7 @@ def reload
   git_changes.each do |z|
 
     ## don't try to reload if file was deleted
-    zone_file = ::File.join(new_resource.deploy_to, z)
+    zone_file = ::File.join(deploy_path, z)
     next unless ::File.file?(zone_file)
 
     out = shell_out!("named-checkzone #{z} #{zone_file}")

@@ -37,7 +37,7 @@
     {
       "type": "docker-tag",
       "repository": "randomcoww/transmission",
-      "tag": "0.4.10"
+      "tag": "0.4.11"
     }
   ]
 }

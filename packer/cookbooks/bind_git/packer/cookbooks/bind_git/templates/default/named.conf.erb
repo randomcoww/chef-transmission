@@ -1,6 +1,7 @@
 ## default confs ##
 
 include "<%= ::File.join(@conf_path, 'rndc.key') %>";
+include "<%= ::File.join(@conf_path, 'bind.keys') %>";
 include "<%= ::File.join(@conf_path, 'named.conf.default-zones') %>";
 include "<%= ::File.join(@conf_path, 'named.conf.local') %>";
 
@@ -16,6 +17,8 @@ options {
   recursion yes;
   allow-recursion { <%= @allow_recursion.join('; ') %>; };
   <% end %>
+  dnssec-validation auto;
+  auth-nxdomain no;
 };
 
 ## zone confs ##

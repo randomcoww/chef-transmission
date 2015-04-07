@@ -4,7 +4,6 @@ bind_git_static "static_zones" do
   group 'bind'
   git_repo ENV['GIT_REPO']
   git_branch ENV['GIT_BRANCH']
-  deploy_to '/var/lib/bind/repo'
 end
 
 include_recipe 'chef-client::default'
