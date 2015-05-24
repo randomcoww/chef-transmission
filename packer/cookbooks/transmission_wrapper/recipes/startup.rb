@@ -17,9 +17,9 @@ iptables_rule "transmission-route" do
   })
 end
 
-#execute 'load_iptables' do
-#  command '/sbin/iptables-restore < /etc/iptables/general'
-#end
+execute 'load_iptables' do
+  command '/sbin/iptables-restore < /etc/iptables/general'
+end
 
 ## write openvpn configs. data bag should be available during startup
 
