@@ -13,7 +13,7 @@ node['route']['networks'].each { |n|
 iptables_rule "transmission-route" do
   variables({
     :user => node['transmission']['user'],
-    :dev => node['openvpn_client']['dev']
+    :dev => ENV['OPENVPN_TUN_DEVICE'] || node['openvpn_client']['dev']
   })
 end
 

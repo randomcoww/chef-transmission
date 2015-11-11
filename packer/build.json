@@ -1,4 +1,7 @@
 {
+  "variables": {
+    "timezone": "America/Los_Angeles"
+  },
   "builders": [
     {
       "type": "docker",
