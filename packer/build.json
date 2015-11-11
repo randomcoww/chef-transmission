@@ -1,6 +1,6 @@
 {
   "variables": {
-    "timezone": "America/Los_Angeles"
+    "timezone": "Etc/UTC"
   },
   "builders": [
     {
