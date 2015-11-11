@@ -2,9 +2,9 @@ source "https://supermarket.getchef.com"
 
 metadata
 
-cookbook 'runit', '=1.5.10'
+#cookbook 'runit', '=1.5.10'
+cookbook 'runit'
 cookbook 'iptables'
-cookbook 'openvpn_client', path: '../openvpn_client'
-cookbook 'bind_git', path: '../bind_git'
+cookbook 'openvpn', git: 'https://github.com/xhost-cookbooks/openvpn.git'
+cookbook 'bind_git', git: 'git@github.com:randomcoww/chef-bind_git.git'
 cookbook 'transmission'
-cookbook 'chef-client'

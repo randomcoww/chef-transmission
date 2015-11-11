@@ -16,20 +16,16 @@
       "type": "shell",
       "inline": [
         "apt-get -y update",
-        "apt-get install -y curl vim git"
+        "apt-get install -y curl vim git",
+        "echo \"{{user `timezone`}}\" > /etc/timezone; dpkg-reconfigure -f noninteractive tzdata"
       ]
     },
     {
       "type": "chef-solo",
       "cookbook_paths": ["cookbooks"],
-      "run_list": ["transmission_wrapper::docker"],
+      "run_list": ["transmission_wrapper::build"],
       "staging_directory": "/etc/chef",
-      "config_template": "files/chef_config",
-      "json": {
-        "chef_client": {
-          "daemon_options": ["-z", "-c", "/etc/chef/solo.rb", "-j", "/etc/chef/node.json"]
-        }
-      }
+      "config_template": "files/chef_config"
     }
   ],
 
@@ -37,7 +33,8 @@
     {
       "type": "docker-tag",
       "repository": "randomcoww/transmission",
-      "tag": "0.4.15"
+      "force": true,
+      "tag": "latest"
     }
   ]
 }

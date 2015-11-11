@@ -24,45 +24,29 @@ package node['transmission_wrapper']['package'] do
   action :install
 end
 
-##
-## config path
-##
-
-file ::File.join(node['transmission']['config_dir'], 'settings.json') do
-  content node['transmission_wrapper']['settings'].to_json
-  owner node['transmission']['user']
-  group node['transmission']['group']
-  mode "0644"
-  ## don't overwrite existing setting from mount path
-  #action :create_if_missing
-end
-
 runit_service 'transmission-daemon' do
   options(
     user: node['transmission']['user'],
     service_binary: node['transmission_wrapper']['service_binary'],
     config_path: node['transmission']['config_dir'],
   )
+  restart_on_update false
   action :enable
 end
 
-## install openvpn - ignore if data bag is not available during build
+## install openvpn - config should be passed into container at runtime
 
-bag = {}
+include_recipe 'openvpn::install'
 
-begin
-  bag = Chef::EncryptedDataBagItem.load(ENV['DATA_BAG'], ENV['BAG_NAME']).to_hash
-rescue
-end
-
-config = bag['config'] || {}
-config.merge!( { "dev" => node['openvpn_client']['dev'] } )
-
-openvpn_client_service 'openvpn' do
-  config config
-  auth_user bag['user']
-  auth_pass bag['pass']
-  ca bag['ca']
+runit_service 'transmission-openvpn' do
+  options(
+    config_path: node['transmission']['config_dir'],
+    config_file: node['openvpn_client']['config_file'],
+    binary: node['openvpn_client']['binary'],
+    run_options: node['openvpn_client']['run_options']
+  )
+  restart_on_update false
+  action :enable
 end
 
 ## install iptables packages

@@ -1,0 +1,2 @@
+#!/bin/sh -e
+exec <%= @options[:binary] %> <%= @options[:run_options] %> --cd <%= @options[:config_path] %> --config <%= @options[:config_file] %>
