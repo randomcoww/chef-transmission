@@ -1,3 +1,26 @@
+## make transmission user and directories now so uid/gid can be configured at container start
+
+# delete current group and replace with new gid
+user node['transmission']['user'] do
+  action :remove
+end
+ 
+group node['transmission']['group'] do
+  action :remove
+end
+
+group node['transmission']['group'] do
+  gid ENV['TRANSMISSION_GID'] || node['transmission_wrapper']['gid']
+  action :create
+end
+
+user node['transmission']['user'] do
+  uid ENV['TRANSMISSION_UID'] || node['transmission_wrapper']['uid']
+  gid node['transmission']['group']
+  home node['transmission']['home']
+  action :create
+end
+
 ## do all networking stuff at startup. some require privileged mode
 ::Chef::Resource.send(:include, TransmissionWrapper::Helper)
 

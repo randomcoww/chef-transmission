@@ -4,14 +4,12 @@
 
 group node['transmission']['group'] do
   gid node['transmission_wrapper']['gid']
-  not_if { node['transmission_wrapper']['gid'].nil? and node['transmission_wrapper']['uid'].nil? }
 end
 
 user node['transmission']['user'] do
   uid node['transmission_wrapper']['uid']
   gid node['transmission']['group']
   home node['transmission']['home']
-  not_if { node['transmission_wrapper']['uid'].nil? }
 end
 
 directory node['transmission']['home'] do
@@ -40,7 +38,7 @@ include_recipe 'openvpn::install'
 
 runit_service 'transmission-openvpn' do
   options(
-    config_path: node['transmission']['config_dir'],
+    config_path: ::File.join(node['transmission']['home'], node['openvpn_client']['config_path']),
     config_file: node['openvpn_client']['config_file'],
     binary: node['openvpn_client']['binary'],
     run_options: node['openvpn_client']['run_options']

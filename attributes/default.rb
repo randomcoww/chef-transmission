@@ -8,6 +8,7 @@ node.override['iptables']['install_rules'] = false
 
 node.default['openvpn_client']['dev'] = 'tun0'
 node.default['openvpn_client']['run_options'] = ''
+node.default['openvpn_client']['config_path'] = '$OPENVPN_CONF_PATH'
 node.default['openvpn_client']['config_file'] = '$OPENVPN_CONF_NAME'
 node.default['openvpn_client']['binary'] = '/usr/sbin/openvpn'
 
