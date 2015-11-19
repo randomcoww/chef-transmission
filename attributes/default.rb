@@ -18,3 +18,5 @@ node.default['route']['networks'] = [
   '192.168.0.0/16',
   '169.254.0.0/16'
 ]
+
+node.override['chef_client']["daemon_options"] = ["-z", "-c", "/etc/chef/solo.rb", "-j", "/etc/chef/node.json"]
