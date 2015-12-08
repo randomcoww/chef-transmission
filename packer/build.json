@@ -19,6 +19,7 @@
       "type": "shell",
       "inline": [
         "apt-get -y update",
+        "apt-get -y upgrade",
         "apt-get install -y curl vim git",
         "echo \"{{user `timezone`}}\" > /etc/timezone; dpkg-reconfigure -f noninteractive tzdata"
       ]
