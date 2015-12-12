@@ -5,7 +5,7 @@ attribute :service, :kind_of => [String], :name_attribute => true
 
 attribute :user, :kind_of => [String], :default => 'debian-transmission'
 attribute :group, :kind_of => [String], :default => 'debian-transmission'
-attribute :info_dir, :kind_of => [String], :default => '/var/lib/transmission/info'
+attribute :info_dir, :kind_of => [String], :default => '/var/lib/transmission-daemon/info'
 
 attribute :settings, :kind_of => [Hash], :default => {
   "alt-speed-down" => 1000,
