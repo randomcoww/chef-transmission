@@ -22,7 +22,7 @@ end
 
 def create_transmission_settings
   ## try to reconfigure uid/gid to match that of mounted directory (if any)
-  if ::File.file?(new_resource.info_dir)
+  if ::File.directory?(new_resource.info_dir)
     begin
       gid = ::File.stat(new_resource.info_dir).gid
       group new_resource.group do
@@ -33,7 +33,7 @@ def create_transmission_settings
     rescue; end
 
     begin
-      uid ::File.stat(new_resource.info_dir).uid
+      uid = ::File.stat(new_resource.info_dir).uid
       user new_resource.user do
         uid uid
         gid new_resource.group
