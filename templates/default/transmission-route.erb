@@ -1,4 +1,0 @@
-<% node['route']['networks'].each do |n| %>
--A OUTPUT -d <%= n %> -m state --state NEW,ESTABLISHED -j ACCEPT
-<% end %>
--A OUTPUT --match owner --uid-owner <%= @user %> ! -o <%= @dev %> -j REJECT

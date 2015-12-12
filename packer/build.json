@@ -27,7 +27,7 @@
     {
       "type": "chef-solo",
       "cookbook_paths": ["cookbooks"],
-      "run_list": ["transmission_wrapper::build"],
+      "run_list": ["transmission::build"],
       "staging_directory": "/etc/chef",
       "config_template": "files/chef_config"
     }

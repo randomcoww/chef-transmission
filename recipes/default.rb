@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: transmission_wrapper
+# Cookbook Name:: transmission
 # Recipe:: default
 #
 # Copyright (C) 2014 YOUR_NAME

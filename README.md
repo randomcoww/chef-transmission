@@ -1,4 +1,4 @@
-# transmission_wrapper-cookbook
+# transmission-cookbook
 
 TODO: Enter the cookbook description here.
 
@@ -16,7 +16,7 @@ TODO: List your supported platforms.
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['transmission_wrapper']['bacon']</tt></td>
+    <td><tt>['transmission']['bacon']</tt></td>
     <td>Boolean</td>
     <td>whether to include bacon</td>
     <td><tt>true</tt></td>
@@ -25,14 +25,14 @@ TODO: List your supported platforms.
 
 ## Usage
 
-### transmission_wrapper::default
+### transmission::default
 
-Include `transmission_wrapper` in your node's `run_list`:
+Include `transmission` in your node's `run_list`:
 
 ```json
 {
   "run_list": [
-    "recipe[transmission_wrapper::default]"
+    "recipe[transmission::default]"
   ]
 }
 ```
