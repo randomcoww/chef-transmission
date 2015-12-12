@@ -96,13 +96,22 @@ def settings
   new_resource.settings.each_pair do |k, v|
     case ENV[k]
     when nil
+      ## no override
       @settings[k] = v
     when "true"
+      ## boolean
       @settings[k] = true
     when "false"
+      ## boolean
       @settings[k] = false
     else
-      @settings[k] = ENV[k]
+      begin
+        ## integer type
+        @settings[k] = Integer(ENV[k])
+      rescue
+        ## string
+        @settings[k] = ENV[k]
+      end
     end
   end
   return @settings
