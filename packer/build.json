@@ -7,10 +7,7 @@
       "type": "docker",
       "image": "phusion/baseimage:latest",
       "commit": "true",
-      "run_command": ["-d", "-t", "{{.Image}}", "/sbin/my_init"],
-      "volumes": {
-        "/etc/chef/secure": "/etc/chef/secure"
-      }
+      "run_command": ["-d", "-t", "{{.Image}}", "/sbin/my_init"]
     }
   ],
 
@@ -28,8 +25,7 @@
       "type": "chef-solo",
       "cookbook_paths": ["cookbooks"],
       "run_list": ["transmission::build"],
-      "staging_directory": "/etc/chef",
-      "config_template": "files/chef_config"
+      "staging_directory": "/etc/chef"
     }
   ],
 
