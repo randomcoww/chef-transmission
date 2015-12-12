@@ -93,10 +93,15 @@ def settings
   return @settings unless @settings.nil?
   @settings = {}
   new_resource.settings.each_pair do |k, v|
-    if ENV.has_key?(k)
-      @settings[k] = ENV[k]
-    else
+    case ENV[k]
+    when nil
       @settings[k] = v
+    when "true"
+      @settings[k] = true
+    when "false"
+      @settings[k] = false
+    else
+      @settings[k] = ENV[k]
     end
   end
   return @settings
