@@ -58,6 +58,7 @@ def create_transmission_settings
   ## remove if symlink. replace with file
   link settings_file do
     action :nothing
+    only_if { ::File.symlink?(settings_file) }
   end.run_action(:delete)
 
   file settings_file do
