@@ -24,16 +24,20 @@ def create_transmission_settings
   ## try to reconfigure uid/gid to match that of mounted directory (if any)
   if ::File.file?(new_resource.info_dir)
     begin
+      gid = ::File.stat(new_resource.info_dir).gid
       group new_resource.group do
-        gid ::File.stat(new_resource.info_dir).gid
+        gid gid
+        not_if { gid < 1000 }
         action :nothing
       end.run_action(:create)
     rescue; end
 
     begin
+      uid ::File.stat(new_resource.info_dir).uid
       user new_resource.user do
-        uid ::File.stat(new_resource.info_dir).uid
+        uid uid
         gid new_resource.group
+        not_if { uid < 1000 }
         action :nothing
       end.run_action(:create)
     rescue; end
