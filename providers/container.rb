@@ -26,6 +26,7 @@ def create_transmission_settings
     directory d do
       owner new_resource.user
       group new_resource.group
+      recursive true
       action :nothing
     end.run_action(:create_if_missing)
   end
