@@ -21,6 +21,24 @@ end
 ##
 
 def create_transmission_settings
+  ## try to reconfigure uid/gid to match that of mounted directory (if any)
+  if ::File.file?(new_resource.info_dir)
+    begin
+      group new_resource.group do
+        gid ::File.stat(new_resource.info_dir).gid
+        action :nothing
+      end.run_action(:create)
+    rescue; end
+
+    begin
+      user new_resource.user do
+        uid ::File.stat(new_resource.info_dir).uid
+        gid new_resource.group
+        action :nothing
+      end.run_action(:create)
+    rescue; end
+  end
+
   ## create directories if not supplied - do not change permissions if it already exists
   [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
     directory d do
@@ -30,18 +48,6 @@ def create_transmission_settings
       action :nothing
     end.run_action(:create_if_missing)
   end
-
-  ## reconfigure user to match uid/gid of directories
-  group new_resource.group do
-    gid ::File.stat(new_resource.info_dir).gid
-    action :nothing
-  end.run_action(:create)
-
-  user new_resource.user do
-    uid ::File.stat(new_resource.info_dir).uid
-    gid new_resource.group
-    action :nothing
-  end.run_action(:create)
 
   ## settings.json
   settings_file = ::File.join(new_resource.info_dir, 'settings.json')
