@@ -67,7 +67,7 @@ def transmission_service
   @transmission_service ||= runit_service new_resource.service do
     options(
       user: new_resource.user,
-      service_binary: node['transmission']['daemon'],
+      daemon: node['transmission']['daemon'],
       info_dir: new_resource.info_dir
     )
     restart_on_update false

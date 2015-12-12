@@ -1,3 +1,2 @@
 #!/bin/sh -e
-<%= node['chef_client']['bin'] %> <%= node['chef_client']['daemon_options'].join(' ') %> -o transmission::startup
-exec chpst -u <%= @options[:user] %> <%= @options[:daemon] %> -f --config-dir <%= @options[:config_path] %>
+exec chpst -u <%= @options[:user] %> <%= @options[:daemon] %> -f --config-dir <%= @options[:info_dir] %>
