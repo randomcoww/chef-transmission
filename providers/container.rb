@@ -22,31 +22,32 @@ end
 
 def create_transmission_settings
   ## try to reconfigure uid/gid to match that of mounted directory (if any)
-  # if ::File.file?(new_resource.info_dir)
-  #   begin
-  #     gid = ::File.stat(new_resource.info_dir).gid
-  #     group new_resource.group do
-  #       gid gid
-  #       not_if { gid < 1000 }
-  #       action :nothing
-  #     end.run_action(:create)
-  #   rescue; end
-  #
-  #   begin
-  #     uid ::File.stat(new_resource.info_dir).uid
-  #     user new_resource.user do
-  #       uid uid
-  #       gid new_resource.group
-  #       not_if { uid < 1000 }
-  #       action :nothing
-  #     end.run_action(:create)
-  #   rescue; end
-  # end
+  if ::File.file?(new_resource.info_dir)
+    begin
+      gid = ::File.stat(new_resource.info_dir).gid
+      group new_resource.group do
+        gid gid
+        not_if { gid < 1000 }
+        action :nothing
+      end.run_action(:create)
+    rescue; end
+
+    begin
+      uid ::File.stat(new_resource.info_dir).uid
+      user new_resource.user do
+        uid uid
+        gid new_resource.group
+        not_if { uid < 1000 }
+        action :nothing
+      end.run_action(:create)
+    rescue; end
+  end
 
   ## create directories if not supplied - do not change permissions if it already exists
   [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
     directory d do
-      owner user
+      owner new_resource.user
+      group new_resource.group
       recursive true
       action :nothing
     end.run_action(:create_if_missing)
@@ -63,8 +64,8 @@ def create_transmission_settings
 
   file settings_file do
     content settings.to_json
-    owner user
-    # group group
+    owner new_resource.user
+    group new_resource.group
     action :nothing
   end.run_action(:create_if_missing)
 end
@@ -76,7 +77,7 @@ end
 def transmission_service
   @transmission_service ||= runit_service new_resource.service do
     options(
-      user: user,
+      user: new_resource.user,
       daemon: node['transmission']['daemon'],
       info_dir: new_resource.info_dir
     )
@@ -105,34 +106,6 @@ def settings
     end
   end
   return @settings
-end
-
-def user
-  return @user unless @user.nil?
-  @user = new_resource.user
-
-  if ::File.file?(new_resource.info_dir)
-    begin
-      gid = ::File.stat(new_resource.info_dir).gid
-      group new_resource.group do
-        gid gid
-        not_if { gid < 1000 }
-        action :nothing
-      end.run_action(:create)
-    rescue; end
-
-    begin
-      uid ::File.stat(new_resource.info_dir).uid
-      user @user do
-        uid uid
-        gid new_resource.group
-        not_if { uid < 1000 }
-        action :nothing
-      end.run_action(:create)
-    rescue; end
-
-    return @user
-  end
 end
 
 
