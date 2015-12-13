@@ -24,17 +24,17 @@ def create_transmission_settings
   ## try to reconfigure uid/gid to match that of mounted directory (if any)
   begin
     group new_resource.group do
-      gid gid
-      not_if { gid.nil? or gid < 1000 }
+      gid transmission_gid
+      not_if { transmission_gid.nil? or transmission_gid < 1000 }
       action :nothing
     end.run_action(:create)
   rescue; end
 
   begin
     user new_resource.user do
-      uid uid
+      uid transmission_uid
       gid new_resource.group
-      not_if { uid.nil? or uid < 1000 }
+      not_if { transmission_uid.nil? or transmission_uid < 1000 }
       action :nothing
     end.run_action(:create)
   rescue; end
@@ -80,7 +80,7 @@ end
 ## get uid and gid of existing settings.json or info directory if available
 ##
 
-def gid
+def transmission_gid
   return Integer(ENV['GID'])
 rescue
   return @gid unless @gid.nil?
@@ -88,7 +88,7 @@ rescue
   return @gid
 end
 
-def uid
+def transmission_uid
   return Integer(ENV['UID'])
 rescue
   return @uid unless @uid.nil?
@@ -98,11 +98,11 @@ end
 
 def provided_owner
   if ::File.file?(settings_file)
-    @uid = ::File.stat?(settings_file).uid
-    @gid = ::File.stat?(settings_file).gid
+    @uid = ::File.stat(settings_file).uid
+    @gid = ::File.stat(settings_file).gid
   elsif ::File.directory?(new_resource.info_dir)
-    @uid = ::File.stat?(new_resource.info_dir).uid
-    @gid = ::File.stat?(new_resource.info_dir).gid
+    @uid = ::File.stat(new_resource.info_dir).uid
+    @gid = ::File.stat(new_resource.info_dir).gid
   end
 end
 
