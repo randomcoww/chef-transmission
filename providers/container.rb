@@ -138,6 +138,7 @@ def settings
 
   ## populate if not provided
   if (@settings.nil? or @settings.empty?)
+    @settings = {}
     new_resource.settings.each_pair do |k, v|
       case ENV[k]
       when nil
