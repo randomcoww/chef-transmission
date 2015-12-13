@@ -22,53 +22,46 @@ end
 
 def create_transmission_settings
   ## try to reconfigure uid/gid to match that of mounted directory (if any)
-  if ::File.directory?(new_resource.info_dir)
-    begin
-      gid = ::File.stat(new_resource.info_dir).gid
-      group new_resource.group do
-        gid gid
-        not_if { gid < 1000 }
-        action :nothing
-      end.run_action(:create)
-    rescue; end
+  begin
+    group new_resource.group do
+      gid gid
+      not_if { gid.nil? or gid < 1000 }
+      action :nothing
+    end.run_action(:create)
+  rescue; end
 
-    begin
-      uid = ::File.stat(new_resource.info_dir).uid
-      user new_resource.user do
-        uid uid
-        gid new_resource.group
-        not_if { uid < 1000 }
-        action :nothing
-      end.run_action(:create)
-    rescue; end
-  end
+  begin
+    user new_resource.user do
+      uid uid
+      gid new_resource.group
+      not_if { uid.nil? or uid < 1000 }
+      action :nothing
+    end.run_action(:create)
+  rescue; end
 
-  ## create directories if not provided - do not change permissions if it already exists
   [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
     directory d do
       owner new_resource.user
       group new_resource.group
       recursive true
       action :nothing
+    ## do not alter existing owner/rperms
     end.run_action(:create_if_missing)
+    # end.run_action(:create)
   end
-
-  ## remove if symlink. replace with file
-  link settings_file do
-    action :nothing
-    only_if { ::File.symlink?(settings_file) }
-  end.run_action(:delete)
 
   file settings_file do
     content settings.to_json
     owner new_resource.user
     group new_resource.group
     action :nothing
+  ## do not alter existing content or perm
   end.run_action(:create_if_missing)
+  # end.run_action(:create)
 end
 
 ##
-## run at build or startup
+## create runit service. run at build time
 ##
 
 def transmission_service
@@ -84,12 +77,53 @@ def transmission_service
 end
 
 ##
-## helpers
+## get uid and gid of existing settings.json or info directory if available
+##
+
+def gid
+  return Integer(ENV['GID'])
+rescue
+  return @gid unless @gid.nil?
+  provided_owner
+  return @gid
+end
+
+def uid
+  return Integer(ENV['UID'])
+rescue
+  return @uid unless @uid.nil?
+  provided_owner
+  return @uid
+end
+
+def provided_owner
+  if ::File.file?(settings_file)
+    @uid = ::File.stat?(settings_file).uid
+    @gid = ::File.stat?(settings_file).gid
+  elsif ::File.directory?(new_resource.info_dir)
+    @uid = ::File.stat?(new_resource.info_dir).uid
+    @gid = ::File.stat?(new_resource.info_dir).gid
+  end
+end
+
+##
+## return settings.json file path - remove symlink if there is one.
 ##
 
 def settings_file
-  @settings_file ||= ::File.join(new_resource.info_dir, 'settings.json')
+  return @settings_file unless @settings_file.nil?
+  @settings_file = ::File.join(new_resource.info_dir, 'settings.json')
+
+  link @settings_file do
+    action :nothing
+    only_if { ::File.symlink?(@settings_file) }
+  end.run_action(:delete)
+  return @settings_file
 end
+
+##
+## return contents of settnigs.json - read mounted or make new.
+##
 
 def settings
   return @settings unless @settings.nil?
