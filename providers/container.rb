@@ -166,10 +166,14 @@ end
 
 
 def action_build
-  transmission_package.run_action(:install)
-  transmission_service.run_action(:enable)
+  converge_by("Installing Transmission client #{new_resource.service}") do
+    transmission_package.run_action(:install)
+    transmission_service.run_action(:enable)
+  end
 end
 
 def action_startup
-  create_transmission_settings
+  converge_by("Running Transmission client startup configuration #{new_resource.service}") do
+    create_transmission_settings
+  end
 end
