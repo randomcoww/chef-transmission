@@ -43,7 +43,7 @@ def create_transmission_settings
     rescue; end
   end
 
-  ## create directories if not supplied - do not change permissions if it already exists
+  ## create directories if not provided - do not change permissions if it already exists
   [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
     directory d do
       owner new_resource.user
@@ -52,9 +52,6 @@ def create_transmission_settings
       action :nothing
     end.run_action(:create_if_missing)
   end
-
-  ## settings.json
-  settings_file = ::File.join(new_resource.info_dir, 'settings.json')
 
   ## remove if symlink. replace with file
   link settings_file do
@@ -87,30 +84,44 @@ def transmission_service
 end
 
 ##
-## helper
+## helpers
 ##
+
+def settings_file
+  @settings_file ||= ::File.join(new_resource.info_dir, 'settings.json')
+end
 
 def settings
   return @settings unless @settings.nil?
-  @settings = {}
-  new_resource.settings.each_pair do |k, v|
-    case ENV[k]
-    when nil
-      ## no override
-      @settings[k] = v
-    when "true"
-      ## boolean
-      @settings[k] = true
-    when "false"
-      ## boolean
-      @settings[k] = false
-    else
-      begin
-        ## integer type
-        @settings[k] = Integer(ENV[k])
-      rescue
-        ## string
-        @settings[k] = ENV[k]
+
+  ## read provided file
+  if ::File.file?(settings_file)
+    begin
+      @settings = JSON.parse(::File.read(settings_file))
+    rescue; end
+  end
+
+  ## populate if not provided
+  if (@settings.nil? or @settings.empty?)
+    new_resource.settings.each_pair do |k, v|
+      case ENV[k]
+      when nil
+        ## no override
+        @settings[k] = v
+      when "true"
+        ## boolean
+        @settings[k] = true
+      when "false"
+        ## boolean
+        @settings[k] = false
+      else
+        begin
+          ## integer type
+          @settings[k] = Integer(ENV[k])
+        rescue
+          ## string
+          @settings[k] = ENV[k]
+        end
       end
     end
   end
