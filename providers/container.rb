@@ -114,10 +114,11 @@ def settings_file
   return @settings_file unless @settings_file.nil?
   @settings_file = ::File.join(new_resource.info_dir, 'settings.json')
 
-  link @settings_file do
-    action :nothing
-    only_if { ::File.symlink?(@settings_file) }
-  end.run_action(:delete)
+  if ::File.symlink?(@settings_file)
+    link @settings_file do
+      action :nothing
+    end.run_action(:delete)
+  end
   return @settings_file
 end
 
