@@ -5,7 +5,7 @@ attribute :service, :kind_of => [String], :name_attribute => true
 
 attribute :user, :kind_of => [String], :default => 'debian-transmission'
 attribute :group, :kind_of => [String], :default => 'debian-transmission'
-attribute :info_dir, :kind_of => [String], :default => '/transmission/info'
+attribute :info_dir, :kind_of => [String], :default => '/var/lib/transmission-daemon/info'
 
 attribute :settings, :kind_of => [Hash], :default => {
   "alt-speed-down" => 1000,
@@ -21,7 +21,7 @@ attribute :settings, :kind_of => [Hash], :default => {
   "blocklist-url" => "http://www.example.com/blocklist",
   "cache-size-mb" => 1024,
   "dht-enabled" => true,
-  "download-dir" => "/transmission/downloads",
+  "download-dir" => "/var/lib/transmission-daemon/downloads",
   "download-limit" => 100,
   "download-limit-enabled" => 0,
   "download-queue-enabled" => true,
@@ -29,7 +29,7 @@ attribute :settings, :kind_of => [Hash], :default => {
   "encryption" => 1,
   "idle-seeding-limit" => 5,
   "idle-seeding-limit-enabled" => true,
-  "incomplete-dir" => "/transmission/incomplete",
+  "incomplete-dir" => "/var/lib/transmission-daemon/incomplete",
   "incomplete-dir-enabled" => true,
   "lpd-enabled" => false,
   "max-peers-global" => 2000,
@@ -75,6 +75,6 @@ attribute :settings, :kind_of => [Hash], :default => {
   "upload-limit-enabled" => 1,
   "upload-slots-per-torrent" => 14,
   "utp-enabled" => true,
-  "watch-dir" => "/transmission/watch",
+  "watch-dir" => "/var/lib/transmission-daemon/watch",
   "watch-dir-enabled" => false
 }
