@@ -40,24 +40,28 @@ def create_transmission_settings
   rescue; end
 
   [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
-    directory d do
-      owner new_resource.user
-      group new_resource.group
-      recursive true
-      action :nothing
-    ## do not alter existing owner/rperms
-    end.run_action(:create_if_missing)
-    # end.run_action(:create)
+    begin
+      directory d do
+        owner new_resource.user
+        group new_resource.group
+        recursive true
+        action :nothing
+      ## do not alter existing owner/rperms
+      end.run_action(:create_if_missing)
+      # end.run_action(:create)
+    rescue; end
   end
 
-  file settings_file do
-    content settings.to_json
-    owner new_resource.user
-    group new_resource.group
-    action :nothing
-  ## do not alter existing content or perm
-  end.run_action(:create_if_missing)
-  # end.run_action(:create)
+  begin
+    file settings_file do
+      content settings.to_json
+      owner new_resource.user
+      group new_resource.group
+      action :nothing
+    ## do not alter existing content or perm
+    end.run_action(:create_if_missing)
+    # end.run_action(:create)
+  rescue; end
 end
 
 ##
