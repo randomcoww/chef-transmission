@@ -81,7 +81,7 @@ end
 ##
 
 def transmission_gid
-  return Integer(ENV['GID'])
+  return Integer(ENV['TRANSMISSION_GID'])
 rescue
   return @gid unless @gid.nil?
   provided_owner
@@ -89,7 +89,7 @@ rescue
 end
 
 def transmission_uid
-  return Integer(ENV['UID'])
+  return Integer(ENV['TRANSMISSION_UID'])
 rescue
   return @uid unless @uid.nil?
   provided_owner
@@ -139,6 +139,7 @@ def settings
   ## populate if not provided
   if (@settings.nil? or @settings.empty?)
     @settings = {}
+
     new_resource.settings.each_pair do |k, v|
       case ENV[k]
       when nil
