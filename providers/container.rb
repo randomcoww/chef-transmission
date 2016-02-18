@@ -10,9 +10,25 @@ end
 ## run at build
 ##
 
-def transmission_package
-  @transmission_package ||= package node['transmission']['package'] do
-    action :nothing
+def install_packages
+  node['transmission']['packages'].each do |p|
+    package p do
+      action :install
+    end
+  end
+end
+
+##
+## mount NFS if provided
+##
+
+def mount_nfs
+  if ENV.key?('NFS_MOUNT')
+    mount ENV['NFS_MOUNT'] do
+      device "#{ENV['NFS_MOUNT']}:#{::File.dirname(new_resource.info_dir)}"
+      fstype "nfs"
+      options node['transmission']['nfs_mount_opts']
+    end.run_action(:mount)
   end
 end
 
@@ -174,13 +190,14 @@ end
 
 def action_build
   converge_by("Installing Transmission client #{new_resource.service}") do
-    transmission_package.run_action(:install)
+    install_packages
     transmission_service.run_action(:enable)
   end
 end
 
 def action_startup
   converge_by("Running Transmission client startup configuration #{new_resource.service}") do
+    mount_nfs
     create_transmission_settings
   end
 end
