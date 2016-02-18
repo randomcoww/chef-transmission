@@ -19,20 +19,6 @@ def install_packages
 end
 
 ##
-## mount NFS if provided
-##
-
-def mount_nfs
-  if ENV.key?('NFS_MOUNT')
-    mount ENV['NFS_MOUNT'] do
-      device "#{ENV['NFS_MOUNT']}:#{::File.dirname(new_resource.info_dir)}"
-      fstype "nfs"
-      options node['transmission']['nfs_mount_opts']
-    end.run_action(:mount)
-  end
-end
-
-##
 ## run at startup
 ##
 
@@ -197,7 +183,6 @@ end
 
 def action_startup
   converge_by("Running Transmission client startup configuration #{new_resource.service}") do
-    mount_nfs
     create_transmission_settings
   end
 end
