@@ -1,5 +1,5 @@
-actions :install
-default_action :install
+actions :build
+default_action :build
 
 attribute :service, :kind_of => [String], :name_attribute => true
 

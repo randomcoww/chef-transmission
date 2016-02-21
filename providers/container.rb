@@ -122,7 +122,7 @@ end
 ## actions
 ##
 
-def action_install
+def action_build
   converge_by("Installing Transmission client #{new_resource.service}") do
     begin
       ## try to reconfigure uid/gid to match that of mounted directory (if any)

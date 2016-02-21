@@ -1,5 +1,5 @@
 transmission_container 'transmission' do
-  action :install
+  action :build
 end
 
 include_recipe 'chef-client::default'
