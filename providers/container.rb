@@ -6,64 +6,61 @@ end
 
 
 
-##
-## run at build
-##
-
-def install_packages
-  node['transmission']['packages'].each do |p|
-    package p do
-      action :install
-    end
-  end
-end
-
-##
-## run at startup
-##
-
-def create_transmission_settings
+def setup_transmission
   ## try to reconfigure uid/gid to match that of mounted directory (if any)
-  begin
-    group new_resource.group do
-      gid transmission_gid
-      not_if { transmission_gid.nil? or transmission_gid < 1000 }
-      action :nothing
-    end.run_action(:create)
-  rescue; end
+  updated = false
 
-  begin
-    user new_resource.user do
-      uid transmission_uid
-      gid new_resource.group
-      not_if { transmission_uid.nil? or transmission_uid < 1000 }
+  node['transmission']['packages'].each do |p|
+    r = package p do
       action :nothing
-    end.run_action(:create)
-  rescue; end
+    end
+    r.run_action(:upgrade)
+    updated ||= r.updated_by_last_action?
+  end
+
+  r = group new_resource.group do
+    gid transmission_gid
+    not_if { transmission_gid.nil? or transmission_gid < 1000 }
+    action :nothing
+  end
+  r.run_action(:create)
+  updated ||= r.updated_by_last_action?
+
+  r = user new_resource.user do
+    uid transmission_uid
+    gid new_resource.group
+    not_if { transmission_uid.nil? or transmission_uid < 1000 }
+    action :nothing
+  end
+  r.run_action(:create)
+  updated ||= r.updated_by_last_action?
 
   [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
-    begin
-      directory d do
-        owner new_resource.user
-        group new_resource.group
-        recursive true
-        action :nothing
-      ## do not alter existing owner/rperms
-      end.run_action(:create_if_missing)
-      # end.run_action(:create)
-    rescue; end
-  end
-
-  begin
-    file settings_file do
-      content settings.to_json
+    r = directory d do
       owner new_resource.user
       group new_resource.group
+      recursive true
       action :nothing
-    ## do not alter existing content or perm
-    end.run_action(:create_if_missing)
-    # end.run_action(:create)
-  rescue; end
+    ## do not alter existing owner/rperms
+    end
+    r.run_action(:create_if_missing)
+    updated ||= r.updated_by_last_action?
+  end
+
+  r = file settings_file do
+    content settings.to_json
+    owner new_resource.user
+    group new_resource.group
+    action :nothing
+  ## do not alter existing content or perm
+  end
+  r.run_action(:create_if_missing)
+  # updated ||= r.updated_by_last_action?
+
+  transmission_service.run_action(:enable)
+  updated ? transmission_service.run_action(:restart) : transmission_service.run_action(:start)
+rescue
+  transmission_service.run_action(:stop) if transmission_service
 end
 
 ##
@@ -80,6 +77,8 @@ def transmission_service
     restart_on_update false
     action :nothing
   end
+rescue
+  nil
 end
 
 ##
@@ -174,15 +173,12 @@ end
 
 
 
-def action_build
-  converge_by("Installing Transmission client #{new_resource.service}") do
-    install_packages
-    transmission_service.run_action(:enable)
-  end
-end
+##
+## actions
+##
 
-def action_startup
-  converge_by("Running Transmission client startup configuration #{new_resource.service}") do
-    create_transmission_settings
+def action_install
+  converge_by("Installing Transmission client #{new_resource.service}") do
+    setup_transmission
   end
 end
