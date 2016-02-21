@@ -6,62 +6,7 @@ end
 
 
 
-def setup_transmission
-  ## try to reconfigure uid/gid to match that of mounted directory (if any)
-  updated = false
 
-  node['transmission']['packages'].each do |p|
-    r = package p do
-      action :nothing
-    end
-    r.run_action(:upgrade)
-    updated ||= r.updated_by_last_action?
-  end
-
-  r = group new_resource.group do
-    gid transmission_gid
-    not_if { transmission_gid.nil? or transmission_gid < 1000 }
-    action :nothing
-  end
-  r.run_action(:create)
-  updated ||= r.updated_by_last_action?
-
-  r = user new_resource.user do
-    uid transmission_uid
-    gid new_resource.group
-    not_if { transmission_uid.nil? or transmission_uid < 1000 }
-    action :nothing
-  end
-  r.run_action(:create)
-  updated ||= r.updated_by_last_action?
-
-  [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
-    r = directory d do
-      owner new_resource.user
-      group new_resource.group
-      recursive true
-      action :nothing
-    ## do not alter existing owner/rperms
-    end
-    r.run_action(:create_if_missing)
-    updated ||= r.updated_by_last_action?
-  end
-
-  r = file settings_file do
-    content settings.to_json
-    owner new_resource.user
-    group new_resource.group
-    action :nothing
-  ## do not alter existing content or perm
-  end
-  r.run_action(:create_if_missing)
-  # updated ||= r.updated_by_last_action?
-
-  transmission_service.run_action(:enable)
-  updated ? transmission_service.run_action(:restart) : transmission_service.run_action(:start)
-rescue
-  transmission_service.run_action(:stop) if transmission_service
-end
 
 ##
 ## create runit service. run at build time
@@ -179,6 +124,61 @@ end
 
 def action_install
   converge_by("Installing Transmission client #{new_resource.service}") do
-    setup_transmission
+    begin
+      ## try to reconfigure uid/gid to match that of mounted directory (if any)
+      updated = false
+
+      node['transmission']['packages'].each do |p|
+        r = package p do
+          action :nothing
+        end
+        r.run_action(:upgrade)
+        updated ||= r.updated_by_last_action?
+      end
+
+      r = group new_resource.group do
+        gid transmission_gid
+        not_if { transmission_gid.nil? or transmission_gid < 1000 }
+        action :nothing
+      end
+      r.run_action(:create)
+      updated ||= r.updated_by_last_action?
+
+      r = user new_resource.user do
+        uid transmission_uid
+        gid new_resource.group
+        not_if { transmission_uid.nil? or transmission_uid < 1000 }
+        action :nothing
+      end
+      r.run_action(:create)
+      updated ||= r.updated_by_last_action?
+
+      [new_resource.info_dir, settings['download-dir'], settings['incomplete-dir'], settings['watch-dir']].compact.each do |d|
+        r = directory d do
+          owner new_resource.user
+          group new_resource.group
+          recursive true
+          action :nothing
+        ## do not alter existing owner/rperms
+      end
+        r.run_action(:create_if_missing)
+        updated ||= r.updated_by_last_action?
+      end
+
+      r = file settings_file do
+        content settings.to_json
+        owner new_resource.user
+        group new_resource.group
+        action :nothing
+      ## do not alter existing content or perm
+      end
+      r.run_action(:create_if_missing)
+      # updated ||= r.updated_by_last_action?
+
+      transmission_service.run_action(:enable)
+      updated ? transmission_service.run_action(:restart) : transmission_service.run_action(:start)
+    rescue
+      transmission_service.run_action(:stop) if transmission_service
+    end
   end
 end
