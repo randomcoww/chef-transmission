@@ -2,7 +2,7 @@
 # Cookbook Name:: transmission
 # Recipe:: default
 #
-# Copyright (C) 2014 YOUR_NAME
+# Copyright (C) 2017 YOUR_NAME
 #
 # All rights reserved - Do Not Redistribute
 #
