@@ -3,6 +3,10 @@ class ChefTransmission
     class Config < Chef::Provider
       provides :transmission_config, os: "linux"
 
+      def whyrun_supported?
+        true
+      end
+
       def load_current_resource
         @current_resource = ChefTransmission::Resource::Config.new(new_resource.name)
 
