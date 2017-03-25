@@ -1,6 +1,8 @@
 class ChefTransmission
   class Resource
     class Config < Chef::Resource
+      include Transmission
+
       resource_name :transmission_config
 
       default_action :create
