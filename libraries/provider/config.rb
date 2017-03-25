@@ -44,7 +44,7 @@ class ChefTransmission
       def transmission_config
         @transmission_config ||= Chef::Resource::File.new(new_resource.path, run_context).tap do |r|
           r.path new_resource.path
-          r.content new_resource.content.to_json
+          r.content new_config.to_json
         end
       end
     end
