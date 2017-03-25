@@ -19,19 +19,19 @@ class ChefTransmission
 
       def action_create_if_missing
         converge_by("Create Transmission config: #{new_resource}") do
-          openvpn_config.run_action(:create_if_missing)
+          transmission_config.run_action(:create_if_missing)
         end if !current_resource.exists
       end
 
       def action_create
         converge_by("Create Transmission config: #{new_resource}") do
-          openvpn_config.run_action(:create)
+          transmission_config.run_action(:create)
         end if !current_resource.exists || new_config != current_resource.config
       end
 
       def action_delete
         converge_by("Delete Transmission config: #{new_resource}") do
-          openvpn_config.run_action(:delete)
+          transmission_config.run_action(:delete)
         end if current_resource.exists
       end
 
@@ -42,7 +42,7 @@ class ChefTransmission
       end
 
       def transmission_config
-        @openvpn_config ||= Chef::Resource::File.new(new_resource.path, run_context).tap do |r|
+        @transmission_config ||= Chef::Resource::File.new(new_resource.path, run_context).tap do |r|
           r.path new_resource.path
           r.content new_resource.content.to_json
         end

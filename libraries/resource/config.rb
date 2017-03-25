@@ -8,7 +8,8 @@ class ChefTransmission
 
       property :exists, [TrueClass, FalseClass]
       property :config, Hash
-      property :path, String
+      property :path, String, desired_state: false,
+                              default: lazy { Transmission::CONFIG_PATH }
     end
   end
 end
