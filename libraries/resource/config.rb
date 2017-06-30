@@ -1,7 +1,7 @@
 class ChefTransmission
   class Resource
     class Config < Chef::Resource
-      include Transmission
+      include TransmissionHelper
 
       resource_name :transmission_config
 
@@ -11,7 +11,7 @@ class ChefTransmission
       property :exists, [TrueClass, FalseClass]
       property :config, Hash
       property :path, String, desired_state: false,
-                              default: lazy { Transmission::CONFIG_PATH }
+                              default: lazy { TransmissionHelper::CONFIG_PATH }
     end
   end
 end
